@@ -1,5 +1,8 @@
+global using LeaveANoteServerProject.Models;
+global using LeaveANoteServerProject.Dto_s;
 using LeaveANoteServerProject.Data;
 using Microsoft.EntityFrameworkCore;
+using LeaveANoteServerProject.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Add Enteties services
+builder.Services.AddScoped<IUserService, UserService>();
+
+//add JWT Authentication
+builder.Services.AddAuthentication().AddJwtBearer();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

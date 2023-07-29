@@ -1,4 +1,6 @@
-﻿namespace LeaveANoteServerProject.Models
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace LeaveANoteServerProject.Models
 {
     public class UnmatchedReport
     {
