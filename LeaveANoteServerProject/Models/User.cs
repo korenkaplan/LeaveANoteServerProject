@@ -12,6 +12,5 @@
         public string DeviceToken { get; set; }
         public DateTime CreatedAt { get; set; }
         public List<Accident> Accidents { get; set; }
-        public List<Accident> UnreadMessages { get; set; }
     }
 }

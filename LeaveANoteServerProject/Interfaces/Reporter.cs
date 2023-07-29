@@ -1,9 +1,8 @@
 ﻿namespace LeaveANoteServerProject.Interfaces
 {
-    public interface IHittingDriver
+    public class Reporter
     {
         public string Name { get; set; }
-        public string CarNumber { get; set; }
         public string PhoneNumber { get; set; }
     }
 }

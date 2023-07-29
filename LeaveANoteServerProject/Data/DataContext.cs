@@ -8,6 +8,7 @@ namespace LeaveANoteServerProject.Data
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
         public DbSet<UnmatchedReport> UnmatchedReports { get; set; }
+        public DbSet<Accident> Accidents { get; set; }
 
     }
 }
