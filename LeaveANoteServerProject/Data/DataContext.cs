@@ -1,6 +1,10 @@
-﻿namespace LeaveANoteServerProject.Data
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace LeaveANoteServerProject.Data
 {
-    public class DataContext
+    public class DataContext : DbContext
     {
+        public DataContext(DbContextOptions<DataContext> options) : base(options) { }
+
     }
 }
