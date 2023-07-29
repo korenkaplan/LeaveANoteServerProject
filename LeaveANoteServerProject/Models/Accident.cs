@@ -2,7 +2,7 @@
 
 namespace LeaveANoteServerProject.Models
 {
-    public class Accicdent
+    public class Accident
     {
         public int Id { get; set; }
         public IHittingDriver HittingDriver { get; set; }
