@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeaveANoteServerProject", "LeaveANoteServerProject\LeaveANoteServerProject.csproj", "{D9E55D2A-D47F-4677-8BD0-B6368CC5DFD8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D9E55D2A-D47F-4677-8BD0-B6368CC5DFD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9E55D2A-D47F-4677-8BD0-B6368CC5DFD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9E55D2A-D47F-4677-8BD0-B6368CC5DFD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9E55D2A-D47F-4677-8BD0-B6368CC5DFD8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0CB35691-2D54-44CF-8D31-84E50C0545B5}
+	EndGlobalSection
+EndGlobal
