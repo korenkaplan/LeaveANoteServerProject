@@ -11,7 +11,6 @@ namespace LeaveANoteServerProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -42,5 +41,65 @@ namespace LeaveANoteServerProject.Controllers
             return StatusCode(res.StatusCode, res); ;
         }
 
+        [HttpPost("updateDeviceToken")]
+        public async Task<IActionResult> UpdateDeviceToken(DeviceTokenUpdateDto deviceTokenUpdateDto )
+        {
+            HttpResponse<string> res = await _userService.UpdateDeviceToken(deviceTokenUpdateDto);
+            return StatusCode(res.StatusCode, res);
+        }
+
+        [HttpPost("informationUpdate")]
+        public async Task<IActionResult> UpdateUserInformation(UpdateInformationDto updateInformationDto)
+        {
+            HttpResponse<string> res = await _userService.UpdateUserInformation(updateInformationDto);
+            return StatusCode(res.StatusCode, res);
+        }
+
+        [HttpPost("passwordUpdate")]
+        public async Task<IActionResult> UpdateUserPassword(UpdateUserPasswordDto updateUserPasswordDto)
+        {
+            HttpResponse<string> res = await _userService.UpdateUserPassword(updateUserPasswordDto);
+            return StatusCode(res.StatusCode, res);
+        }
+
+        [HttpGet("searchCarNumber/{carNumber}")]
+        public async Task<IActionResult> GetUserByCarNumber(string carNumber)
+        {
+            HttpResponse<GetUserByCarNumberDto> res = await _userService.GetUserByCarNumber(carNumber);
+            return StatusCode(res.StatusCode, res);
+        }
+
+        [HttpGet("getById/{id}")]
+        public async Task<IActionResult> GetUserById(int id)
+        {
+            HttpResponse<User> res = await _userService.GetUserById(id);
+            return StatusCode(res.StatusCode, res);
+        }
+
+        [HttpGet("getByIdMinimal/{id}")]
+        public async Task<IActionResult> GetMinimalUserById(int id)
+        {
+            HttpResponse<MinimalUserDto> res = await _userService.GetMinimalUserById(id);
+            return StatusCode(res.StatusCode, res);
+        }
+        [HttpPost("deleteMessage")]
+        public async Task<IActionResult> DeleteAccidentFromInbox(AccidentDeleteDto accidentDeleteDto)
+        {
+            HttpResponse<string> res = await _userService.DeleteAccidentFromInbox(accidentDeleteDto);
+            return StatusCode(res.StatusCode, res);
+        }
+        [HttpPost("readMessageInbox")]
+        public async Task<IActionResult> DeleteAccidentFromHistory(AccidentDeleteDto accidentDeleteDto)
+        {
+            HttpResponse<string> res = await _userService.DeleteAccidentFromHistory(accidentDeleteDto);
+            return StatusCode(res.StatusCode, res);
+        }
+
+        [HttpDelete("deleteUser/{id}")]
+        public async Task<IActionResult> DeleteUserByID(int id)
+        {
+            HttpResponse<string> res = await _userService.DeleteUserById(id);
+            return StatusCode(res.StatusCode, res);
+        }
     }
 }

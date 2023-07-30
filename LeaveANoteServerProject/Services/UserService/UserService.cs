@@ -2,8 +2,8 @@
 using LeaveANoteServerProject.Dto_s.User_Dto_s;
 using LeaveANoteServerProject.DTO_s.User_Dto_s;
 using LeaveANoteServerProject.Utils;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace LeaveANoteServerProject.Services.UserService
 {
@@ -28,9 +28,19 @@ namespace LeaveANoteServerProject.Services.UserService
                 string token = Token.CreateToken(user, _configuration);
                 return new HttpResponse<object> { IsSuccessful = true, Message = "Registration Succeed", Data = new { token }, StatusCode = 201 };
             }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException sqlException && IsDuplicateKeyError(sqlException))
+                {
+                    string errorMessage = GetDuplicateKeyErrorMessage(sqlException);
+                    return new HttpResponse<object> { IsSuccessful = false, Message = "Failed to update information", Error = errorMessage, StatusCode = 400 };
+                }
+
+                return new HttpResponse<object> { IsSuccessful = false, Message = "Failed to update information", Error = ex.Message, StatusCode = 500 };
+            }
             catch (Exception ex)
             {
-                return new HttpResponse<object> { IsSuccessful = false,Message="Registration Failed", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<object> { IsSuccessful = false, Message = "Registration Failed", Error = ex.Message, StatusCode = 500 };
             }
         }
 
@@ -89,25 +99,6 @@ namespace LeaveANoteServerProject.Services.UserService
             }
         }
 
-        public async Task<HttpResponse<string>> UpdateUserInformation(UpdateInformationDto updateInformationDto)
-        {
-            try
-            {
-                var user = await _context.Users.FindAsync(updateInformationDto.Id);
-                if (user == null)
-                {
-                    return new HttpResponse<string> { IsSuccessful = false, Message = "Information Update Failed", Error = "The Id was not found in the database", StatusCode = 404 };
-                }
-                user.UpdateInformation(updateInformationDto);
-                await _context.SaveChangesAsync();
-                return new HttpResponse<string> { IsSuccessful = true, Message = "Information updated successfully", StatusCode = 200 };
-            }
-            catch (Exception ex)
-            {
-                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update information", Error = ex.Message, StatusCode = 500 };
-            }
-        }
-
         public async Task<HttpResponse<string>> UpdateUserPassword(UpdateUserPasswordDto updateUserPasswordDto)
         {
             try
@@ -117,7 +108,8 @@ namespace LeaveANoteServerProject.Services.UserService
                 {
                     return new HttpResponse<string> { IsSuccessful = false, Message = "Password Update Failed", Error = "The Id was not found in the database", StatusCode = 404 };
                 }
-                user.UpdatePassword(updateUserPasswordDto);
+                bool isUpdated = user.UpdatePassword(updateUserPasswordDto);
+                if(!isUpdated) { return new HttpResponse<string> { IsSuccessful = false, Message = "Password Update Failed", Error = "old Password is incorrect", StatusCode = 400 }; }
                 await _context.SaveChangesAsync();
                 return new HttpResponse<string> { IsSuccessful = true, Message = "Password updated successfully", StatusCode = 200 };
             }
@@ -136,7 +128,7 @@ namespace LeaveANoteServerProject.Services.UserService
                 {
                     return new HttpResponse<GetUserByCarNumberDto> { IsSuccessful = false, Message = "Failed to fetch the user", Error = "The Id was not found in the database", StatusCode = 404 };
                 }
-                GetUserByCarNumberDto getUserByCarNumberDto = new GetUserByCarNumberDto(user.Id, user.CarNumber);
+                GetUserByCarNumberDto getUserByCarNumberDto = new GetUserByCarNumberDto(user.Id, user.DeviceToken);
 
                 return new HttpResponse<GetUserByCarNumberDto> { IsSuccessful = true, Message = "User found successfully", Data = getUserByCarNumberDto, StatusCode = 200 };
             }
@@ -165,7 +157,7 @@ namespace LeaveANoteServerProject.Services.UserService
        
         }
 
-        public async Task<HttpResponse<MinimalUserDto>> GetUserByIdMinimal(int id)
+        public async Task<HttpResponse<MinimalUserDto>> GetMinimalUserById(int id)
         {
             try
             {
@@ -183,6 +175,141 @@ namespace LeaveANoteServerProject.Services.UserService
             }
         
         }
+
+        public async Task<HttpResponse<string>> DeleteAccidentFromInbox(AccidentDeleteDto accidentDeleteDto)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(accidentDeleteDto.UserId);
+                if (user == null)
+                {
+                    return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to fetch the user", Error = "The Id was not found in the database", StatusCode = 404 };
+                }
+
+                Accident accident = user.Accidents.FirstOrDefault(a => a.Id == accidentDeleteDto.AccidentId);
+                if (accident == null)
+                {
+                    return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to fetch the accident", Error = "The Id was not found in the user's accidents list", StatusCode = 404 };
+                }
+                accident.IsRead = true;
+                await _context.SaveChangesAsync();
+
+                return new HttpResponse<string> { IsSuccessful = true, Message = "Message has been marked as read", StatusCode = 200 };
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to Mark message as read", Error = ex.Message, StatusCode = 500 };
+            }
+        }
+
+        public async Task<HttpResponse<string>> DeleteAccidentFromHistory(AccidentDeleteDto accidentDeleteDto)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(accidentDeleteDto.UserId);
+                if (user == null)
+                {
+                    return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to fetch the user", Error = "The Id was not found in the database", StatusCode = 404 };
+                }
+
+                Accident accident = user.Accidents.FirstOrDefault(a => a.Id == accidentDeleteDto.AccidentId);
+                if (accident == null)
+                {
+                    return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to fetch the accident", Error = "The Id was not found in the user's accidents list", StatusCode = 404 };
+                }
+                accident.IsDeleted = true;
+                await _context.SaveChangesAsync();
+
+                return new HttpResponse<string> { IsSuccessful = true, Message = "Message has been marked as Deleted", StatusCode = 200 };
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to Mark message as deleted", Error = ex.Message, StatusCode = 500 };
+            }
+        }
+
+        public async Task<HttpResponse<string>> DeleteUserById(int id)
+        {
+            try
+            {
+                User user = await _context.Users.FindAsync(id);
+                if (user != null)
+                {
+                    _context.Users.Remove(user);
+                    await _context.SaveChangesAsync();
+                    return new HttpResponse<string> { IsSuccessful = true, Message = $"User with the id: {id} was removed", StatusCode = 200 };
+                }
+                return new HttpResponse<string> { IsSuccessful = false, Message = $"User with the id: {id} was't found", StatusCode = 404 };
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to deleted user", Error = ex.Message, StatusCode = 500 };
+            }
+
+        }
+
+        public async Task<HttpResponse<string>> UpdateUserInformation(UpdateInformationDto updateInformationDto)
+    {
+        try
+        {
+            var user = await _context.Users.FindAsync(updateInformationDto.Id);
+            if (user == null)
+            {
+                return new HttpResponse<string> { IsSuccessful = false, Message = "Information Update Failed", Error = "The Id was not found in the database", StatusCode = 404 };
+            }
+            user.UpdateInformation(updateInformationDto);
+            await _context.SaveChangesAsync();
+            return new HttpResponse<string> { IsSuccessful = true, Message = "Information updated successfully", StatusCode = 200 };
+        }
+        catch (DbUpdateException ex)
+        {
+            if (ex.InnerException is SqlException sqlException && IsDuplicateKeyError(sqlException))
+            {
+                string errorMessage = GetDuplicateKeyErrorMessage(sqlException);
+                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update information", Error = errorMessage, StatusCode = 400 };
+            }
+
+            return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update information", Error = ex.Message, StatusCode = 500 };
+        }
+        catch (Exception ex)
+        {
+            return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update information", Error = ex.Message, StatusCode = 500 };
+        }
+    }
+
+        private bool IsDuplicateKeyError(SqlException ex)
+    {
+        // SQL Server error code for unique index violation is 2601
+        // You can also check for error number 2627, which corresponds to the same issue.
+        return ex.Number == 2601 || ex.Number == 2627;
+    }
+
+        private string GetDuplicateKeyErrorMessage(SqlException ex)
+        {
+            // Extract the index name from the exception message to indicate which field caused the issue.
+          
+            int startIndex = ex.Message.IndexOf('\'');
+            int endIndex = ex.Message.LastIndexOf('\'');
+            string indexName = ex.Message.Substring(startIndex + 1, endIndex - startIndex - 1);
+
+            // You can create a mapping to convert index names to more user-friendly field names if needed.
+            string field;
+                if( indexName.Contains("CarNumber"))
+                    field = "car number";
+                 else if (indexName.Contains("PhoneNumber"))
+                    field = "phone number";
+                 else if (indexName.Contains("DeviceToken"))
+                    field = "device token";
+                 else if (indexName.Contains("Email"))
+                    field = "email";
+                 else
+                    field = "field";
+
+            return $"This {field} is aleady in use by another user";
+        }
+
+
+
     }
 
 }

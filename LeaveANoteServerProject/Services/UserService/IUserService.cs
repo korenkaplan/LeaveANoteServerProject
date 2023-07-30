@@ -11,11 +11,12 @@ namespace LeaveANoteServerProject.Services.UserService
         Task<HttpResponse<string>> UpdateDeviceToken(DeviceTokenUpdateDto deviceTokenUpdateDto);
         Task<HttpResponse<string>> UpdateUserInformation(UpdateInformationDto updateInformationDto);
         Task<HttpResponse<string>> UpdateUserPassword(UpdateUserPasswordDto updateUserPasswordDto);
-        //Task<HttpResponse<string>> DeleteMessageFromInbox(int accidentId);
-        //Task<HttpResponse<string>> DeleteMessageFromHistory(int accidentId);
+        Task<HttpResponse<string>> DeleteAccidentFromInbox(AccidentDeleteDto accidentDeleteDto);
+        Task<HttpResponse<string>> DeleteAccidentFromHistory(AccidentDeleteDto accidentDeleteDto);
         Task<HttpResponse<GetUserByCarNumberDto>> GetUserByCarNumber(string carNumber);
         Task<HttpResponse<User>> GetUserById(int id);
-        Task<HttpResponse<MinimalUserDto>> GetUserByIdMinimal(int id);
+        Task<HttpResponse<string>> DeleteUserById(int id);
+        Task<HttpResponse<MinimalUserDto>> GetMinimalUserById(int id);
 
     }
 }
