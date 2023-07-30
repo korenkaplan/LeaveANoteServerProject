@@ -91,7 +91,7 @@ namespace LeaveANoteServerProject.Services.UserService
                 }
                 user.DeviceToken = deviceTokenUpdateDto.DeviceToken;
                 await _context.SaveChangesAsync();
-                return new HttpResponse<string> { IsSuccessful = true, Message = "Token updated successfully" };
+                return new HttpResponse<string> { IsSuccessful = true, Message = "Token updated successfully", Data = user.DeviceToken };
             }
             catch (Exception ex)
             {
@@ -188,6 +188,7 @@ namespace LeaveANoteServerProject.Services.UserService
                     return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to fetch the user", Error = "The Id was not found in the database", StatusCode = 404 };
                 }
 
+                await _context.Entry(user).Collection(u => u.Accidents).LoadAsync();
                 Accident accident = user.Accidents.FirstOrDefault(a => a.Id == accidentDeleteDto.AccidentId);
                 if (accident == null)
                 {
@@ -213,7 +214,7 @@ namespace LeaveANoteServerProject.Services.UserService
                 {
                     return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to fetch the user", Error = "The Id was not found in the database", StatusCode = 404 };
                 }
-
+                await _context.Entry(user).Collection(u => u.Accidents).LoadAsync();
                 Accident accident = user.Accidents.FirstOrDefault(a => a.Id == accidentDeleteDto.AccidentId);
                 if (accident == null)
                 {
@@ -250,32 +251,32 @@ namespace LeaveANoteServerProject.Services.UserService
 
         }
 
-        public async Task<HttpResponse<string>> UpdateUserInformation(UpdateInformationDto updateInformationDto)
+        public async Task<HttpResponse<User>> UpdateUserInformation(UpdateInformationDto updateInformationDto)
         {
             try
             {
                 var user = await _context.Users.FindAsync(updateInformationDto.Id);
                 if (user == null)
                 {
-                    return new HttpResponse<string> { IsSuccessful = false, Message = "Information Update Failed", Error = "The Id was not found in the database", StatusCode = 404 };
+                    return new HttpResponse<User> { IsSuccessful = false, Message = "Information Update Failed", Error = "The Id was not found in the database", StatusCode = 404 };
                 }
                 user.UpdateInformation(updateInformationDto);
                 await _context.SaveChangesAsync();
-                return new HttpResponse<string> { IsSuccessful = true, Message = "Information updated successfully", StatusCode = 200 };
+                return new HttpResponse<User> { IsSuccessful = true, Message = "Information updated successfully", StatusCode = 200 , Data= user};
             }
             catch (DbUpdateException ex)
             {
                 if (ex.InnerException is SqlException sqlException && IsDuplicateKeyError(sqlException))
                 {
                     string errorMessage = GetDuplicateKeyErrorMessage(sqlException);
-                    return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update information", Error = errorMessage, StatusCode = 400 };
+                    return new HttpResponse<User> { IsSuccessful = false, Message = "Failed to update information", Error = errorMessage, StatusCode = 400 };
                 }
 
-                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update information", Error = ex.InnerException.Message, StatusCode = 500 };
+                return new HttpResponse<User> { IsSuccessful = false, Message = "Failed to update information", Error = ex.InnerException.Message, StatusCode = 500 };
             }
             catch (Exception ex)
             {
-                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update information", Error = ex.InnerException.Message, StatusCode = 500 };
+                return new HttpResponse<User> { IsSuccessful = false, Message = "Failed to update information", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         } 
         #endregion

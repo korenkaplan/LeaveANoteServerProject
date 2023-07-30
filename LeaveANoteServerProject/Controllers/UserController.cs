@@ -12,7 +12,7 @@ namespace LeaveANoteServerProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] 
+   // [Authorize] 
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -33,7 +33,6 @@ namespace LeaveANoteServerProject.Controllers
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
             HttpResponse<object> res = await _userService.Login(loginDto);
-            Log.Information("Respond=> {@res}", res);
             return StatusCode(res.StatusCode, res);
         }
 
@@ -44,54 +43,54 @@ namespace LeaveANoteServerProject.Controllers
             return StatusCode(res.StatusCode, res); ;
         }
 
-        [HttpPost("updateDeviceToken")]
+        [HttpPut("updateDeviceToken")]
         public async Task<IActionResult> UpdateDeviceToken(DeviceTokenUpdateDto deviceTokenUpdateDto )
         {
             HttpResponse<string> res = await _userService.UpdateDeviceToken(deviceTokenUpdateDto);
             return StatusCode(res.StatusCode, res);
         }
 
-        [HttpPost("informationUpdate")]
+        [HttpPut("informationUpdate")]
         public async Task<IActionResult> UpdateUserInformation(UpdateInformationDto updateInformationDto)
         {
-            HttpResponse<string> res = await _userService.UpdateUserInformation(updateInformationDto);
+            HttpResponse<User> res = await _userService.UpdateUserInformation(updateInformationDto);
             return StatusCode(res.StatusCode, res);
         }
 
-        [HttpPost("passwordUpdate")]
+        [HttpPut("passwordUpdate")]
         public async Task<IActionResult> UpdateUserPassword(UpdateUserPasswordDto updateUserPasswordDto)
         {
             HttpResponse<string> res = await _userService.UpdateUserPassword(updateUserPasswordDto);
             return StatusCode(res.StatusCode, res);
         }
 
-        [HttpGet("searchCarNumber/{carNumber}")]
-        public async Task<IActionResult> GetUserByCarNumber(string carNumber)
+        [HttpGet("searchCarNumber/")]
+        public async Task<IActionResult> GetUserByCarNumber([FromQuery] string carNumber)
         {
             HttpResponse<GetUserByCarNumberDto> res = await _userService.GetUserByCarNumber(carNumber);
             return StatusCode(res.StatusCode, res);
         }
 
-        [HttpGet("getById/{id}")]
-        public async Task<IActionResult> GetUserById(int id)
+        [HttpGet("getById/")]
+        public async Task<IActionResult> GetUserById([FromQuery] int id)
         {
             HttpResponse<User> res = await _userService.GetUserById(id);
             return StatusCode(res.StatusCode, res);
         }
 
-        [HttpGet("getByIdMinimal/{id}")]
-        public async Task<IActionResult> GetMinimalUserById(int id)
+        [HttpGet("getByIdMinimal/")]
+        public async Task<IActionResult> GetMinimalUserById([FromQuery] int id)
         {
             HttpResponse<MinimalUserDto> res = await _userService.GetMinimalUserById(id);
             return StatusCode(res.StatusCode, res);
         }
-        [HttpPost("deleteMessage")]
+        [HttpPut("readMessageInbox")]
         public async Task<IActionResult> DeleteAccidentFromInbox(AccidentDeleteDto accidentDeleteDto)
         {
             HttpResponse<string> res = await _userService.DeleteAccidentFromInbox(accidentDeleteDto);
             return StatusCode(res.StatusCode, res);
         }
-        [HttpPost("readMessageInbox")]
+        [HttpPost("deleteMessage")]
         public async Task<IActionResult> DeleteAccidentFromHistory(AccidentDeleteDto accidentDeleteDto)
         {
             HttpResponse<string> res = await _userService.DeleteAccidentFromHistory(accidentDeleteDto);

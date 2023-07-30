@@ -24,7 +24,7 @@ namespace LeaveANoteServerProject.Services.AccidentService
 
                 if (user == null)
                 {
-                    return new HttpResponse<Accident> { IsSuccessful = false, StatusCode = 500, Message = "There was a problem  in the connection of the server and the database" };
+                    return new HttpResponse<Accident> { IsSuccessful = false, StatusCode = 500, Message = $"No user found with the id of: {createNoteDto.UserId}" };
                 }
                 Accident acccident = CreateAccidentObjectFromNote(createNoteDto);
                 user.Accidents.Add(acccident);

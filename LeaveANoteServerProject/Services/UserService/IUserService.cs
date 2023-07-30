@@ -38,7 +38,7 @@ namespace LeaveANoteServerProject.Services.UserService
         /// </summary>
         /// <param name="updateInformationDto">The object containing the updated user information.</param>
         /// <returns>A response with the status of the information update.</returns>
-        Task<HttpResponse<string>> UpdateUserInformation(UpdateInformationDto updateInformationDto);
+        Task<HttpResponse<User>> UpdateUserInformation(UpdateInformationDto updateInformationDto);
 
         /// <summary>
         /// Update the password for a user in the database.
