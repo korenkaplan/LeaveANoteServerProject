@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using LeaveANoteServerProject.Services.UserService;
 using Serilog;
 using LeaveANoteServerProject.Services.AccidentService;
+using LeaveANoteServerProject.Services.StatsService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,7 @@ Log.Logger = new LoggerConfiguration().MinimumLevel.Information().WriteTo.Consol
 //Add Enteties services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccidentService, AccidentService>();
+builder.Services.AddScoped<IStatsService, StatsService>();
 
 //add JWT Authentication
 builder.Services.AddAuthentication().AddJwtBearer();
