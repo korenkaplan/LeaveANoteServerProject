@@ -1,5 +1,6 @@
 ﻿using LeaveANoteServerProject.DTO_s.Accident_Dto_s;
 using LeaveANoteServerProject.Services.AccidentService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace LeaveANoteServerProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AccidentController : ControllerBase
     {
 

@@ -12,7 +12,7 @@ namespace LeaveANoteServerProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize] 
+    [Authorize] 
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -23,7 +23,7 @@ namespace LeaveANoteServerProject.Controllers
         }
 
         [HttpPost("register"),AllowAnonymous]
-        public async Task<IActionResult> RegisterNewUser([FromBody] User user)
+        public async Task<IActionResult> RegisterNewUser(User user)
         {
             HttpResponse<object> res = await _userService.RegisterUser(user);
             return StatusCode(res.StatusCode, res);
