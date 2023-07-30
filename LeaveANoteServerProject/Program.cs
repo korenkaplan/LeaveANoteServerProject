@@ -3,6 +3,8 @@ global using LeaveANoteServerProject.Dto_s;
 using LeaveANoteServerProject.Data;
 using Microsoft.EntityFrameworkCore;
 using LeaveANoteServerProject.Services.UserService;
+using Serilog;
+using LeaveANoteServerProject.Services.AccidentService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +15,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//add the configuration for serilog logger
+Log.Logger = new LoggerConfiguration().MinimumLevel.Information().WriteTo.Console().CreateLogger();
+
 //Add Enteties services
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAccidentService, AccidentService>();
 
 //add JWT Authentication
 builder.Services.AddAuthentication().AddJwtBearer();

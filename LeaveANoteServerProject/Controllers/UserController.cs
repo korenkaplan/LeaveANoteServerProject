@@ -5,12 +5,14 @@ using LeaveANoteServerProject.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using System.Linq.Expressions;
 
 namespace LeaveANoteServerProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize] 
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -31,6 +33,7 @@ namespace LeaveANoteServerProject.Controllers
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
             HttpResponse<object> res = await _userService.Login(loginDto);
+            Log.Information("Respond=> {@res}", res);
             return StatusCode(res.StatusCode, res);
         }
 

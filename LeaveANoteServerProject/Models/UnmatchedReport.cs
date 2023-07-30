@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace LeaveANoteServerProject.Models
 {
@@ -7,6 +8,6 @@ namespace LeaveANoteServerProject.Models
         public int Id { get; set; }
         public string DamagedCarNumber { get; set; }
         public Accident Accident { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

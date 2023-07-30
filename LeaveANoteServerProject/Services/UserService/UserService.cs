@@ -37,24 +37,23 @@ namespace LeaveANoteServerProject.Services.UserService
                     return new HttpResponse<object> { IsSuccessful = false, Message = "Failed to update information", Error = errorMessage, StatusCode = 400 };
                 }
 
-                return new HttpResponse<object> { IsSuccessful = false, Message = "Failed to update information", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<object> { IsSuccessful = false, Message = "Failed to update information", Error = ex.InnerException.Message, StatusCode = 500 };
             }
             catch (Exception ex)
             {
-                return new HttpResponse<object> { IsSuccessful = false, Message = "Registration Failed", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<object> { IsSuccessful = false, Message = "Registration Failed", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         }
-
         public async Task<HttpResponse<List<User>>> GetAllUsers()
         {
             try
             {
-                var users = await _context.Users.ToListAsync();
+                var users = await _context.Users.Include(u => u.Accidents).ToListAsync();
                 return new HttpResponse<List<User>> { IsSuccessful = true, Message = "All Database Users", Data = users, StatusCode = 200 };
             }
             catch (Exception ex)
             {
-                return new HttpResponse<List<User>> { IsSuccessful = false, Message = "Failed To Fetch All Users", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<List<User>> { IsSuccessful = false, Message = "Failed To Fetch All Users", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         }
 
@@ -77,7 +76,7 @@ namespace LeaveANoteServerProject.Services.UserService
             }
             catch (Exception ex)
             {
-                return new HttpResponse<object> { IsSuccessful = false, Message = "Failed To Fetch All Users", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<object> { IsSuccessful = false, Message = "Failed To Fetch All Users", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         }
 
@@ -96,7 +95,7 @@ namespace LeaveANoteServerProject.Services.UserService
             }
             catch (Exception ex)
             {
-                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update token", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update token", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         }
 
@@ -116,7 +115,7 @@ namespace LeaveANoteServerProject.Services.UserService
             }
             catch (Exception ex)
             {
-                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update password", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update password", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         }
 
@@ -135,7 +134,7 @@ namespace LeaveANoteServerProject.Services.UserService
             }
             catch (Exception ex)
             {
-                return new HttpResponse<GetUserByCarNumberDto> { IsSuccessful = false, Message = "Failed to fetch user", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<GetUserByCarNumberDto> { IsSuccessful = false, Message = "Failed to fetch user", Error = ex.InnerException.Message, StatusCode = 500 };
             }
 
         }
@@ -149,11 +148,13 @@ namespace LeaveANoteServerProject.Services.UserService
                 {
                     return new HttpResponse<User> { IsSuccessful = false, Message = "Failed to fetch the user", Error = "The Id was not found in the database", StatusCode = 404 };
                 }
+                // Explicitly loading the Accidents navigation property
+                await _context.Entry(user).Collection(u => u.Accidents).LoadAsync();
                 return new HttpResponse<User> { IsSuccessful = true, Message = "User found successfully", Data = user, StatusCode = 200 };
             }
             catch (Exception ex)
             {
-                return new HttpResponse<User> { IsSuccessful = false, Message = "Failed to fetch user", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<User> { IsSuccessful = false, Message = "Failed to fetch user", Error = ex.InnerException.Message, StatusCode = 500 };
             }
 
         }
@@ -172,7 +173,7 @@ namespace LeaveANoteServerProject.Services.UserService
             }
             catch (Exception ex)
             {
-                return new HttpResponse<MinimalUserDto> { IsSuccessful = false, Message = "Failed to fetch user", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<MinimalUserDto> { IsSuccessful = false, Message = "Failed to fetch user", Error = ex.InnerException.Message, StatusCode = 500 };
             }
 
         }
@@ -199,7 +200,7 @@ namespace LeaveANoteServerProject.Services.UserService
             }
             catch (Exception ex)
             {
-                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to Mark message as read", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to Mark message as read", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         }
 
@@ -225,7 +226,7 @@ namespace LeaveANoteServerProject.Services.UserService
             }
             catch (Exception ex)
             {
-                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to Mark message as deleted", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to Mark message as deleted", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         }
 
@@ -270,11 +271,11 @@ namespace LeaveANoteServerProject.Services.UserService
                     return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update information", Error = errorMessage, StatusCode = 400 };
                 }
 
-                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update information", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update information", Error = ex.InnerException.Message, StatusCode = 500 };
             }
             catch (Exception ex)
             {
-                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update information", Error = ex.Message, StatusCode = 500 };
+                return new HttpResponse<string> { IsSuccessful = false, Message = "Failed to update information", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         } 
         #endregion
