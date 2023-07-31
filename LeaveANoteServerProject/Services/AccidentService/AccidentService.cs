@@ -48,7 +48,7 @@ namespace LeaveANoteServerProject.Services.AccidentService
                 //if not found add to unmatched reports table
                 if (user == null)
                 {
-                    UnmatchedReport unmatched = await CreateUnmatchedReport(accident, createReportReqDto.DamagedCarNumber);
+                    UnmatchedReport unmatched =  CreateUnmatchedReport(accident, createReportReqDto.DamagedCarNumber);
                     await _context.UnmatchedReports.AddAsync(unmatched);
                     await _context.SaveChangesAsync();
                     return new HttpResponse<Accident> { IsSuccessful = true, Message = "The report has been Added to unmatched reoprts", Data = accident, StatusCode = 201 };
@@ -120,7 +120,7 @@ namespace LeaveANoteServerProject.Services.AccidentService
         /// <param name="accident">The <see cref="Accident"/> object associated with the unmatched report.</param>
         /// <param name="carNumber">The damaged car number for the unmatched report.</param>
         /// <returns>The created <see cref="UnmatchedReport"/> object.</returns>
-        private async Task<UnmatchedReport> CreateUnmatchedReport(Accident accident, string carNumber)
+        private  UnmatchedReport CreateUnmatchedReport(Accident accident, string carNumber)
         {
             UnmatchedReport unmatched = new UnmatchedReport();
             unmatched.Accident = accident;

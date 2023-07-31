@@ -27,9 +27,9 @@ namespace LeaveANoteServerProject.Services.StatsService
                 List<User> users = await _context.Users.Where(u => u.CreatedAt.Year == year).ToListAsync();
 
                 Dictionary<string, int> dict = CreateMonthDictionary(year);
-                RegisteredUsersDto registeredUsersDto =  FillDictionaryWithData(dict, users);
+                RegisteredUsersDto registeredUsersDto = FillMonthlyDictionaryWithData(dict, users);
 
-                return new HttpResponse<RegisteredUsersDto> { IsSuccessful = true, Message = "Graph data", Data = registeredUsersDto };
+                return new HttpResponse<RegisteredUsersDto> { IsSuccessful = true, Message = "Graph data", Data = registeredUsersDto , StatusCode = 200};
             }
             catch (Exception ex)
             {
@@ -37,9 +37,53 @@ namespace LeaveANoteServerProject.Services.StatsService
             }
         }
 
-        public Task<HttpResponse<ReportsDistributionDto>> ReportsDistributtion(ReportsDistributtionDtoReq reportsDistributtionDtoReq)
+        public async Task<HttpResponse<ReportsDistributionDto>> ReportsDistributtion(ReportsDistributtionDtoReq reportsDistributtionDtoReq)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<Accident> accidents = await _context.Accidents.ToListAsync();
+                List<UnmatchedReport> unmatchedReports = await _context.UnmatchedReports.ToListAsync();
+
+                ReportsDistributionDto reportsDistributionDto = FillDistributionData(accidents,unmatchedReports);
+
+                return new HttpResponse<ReportsDistributionDto> { IsSuccessful = true, Message = "Graph data", Data = reportsDistributionDto, StatusCode = 200 };
+
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponse<ReportsDistributionDto> { IsSuccessful = false, Message = "Failed to fetch graph data", Error = ex.InnerException.Message, StatusCode = 500 };
+            }
+        }
+        #region Private Fucntions
+        private ReportsDistributionDto FillDistributionData(List<Accident> accidents, List<UnmatchedReport> unmatchedReports)
+        {
+            ReportsDistributionDto reportsDistributionDto = new ReportsDistributionDto();
+            AddNotesAndReportsCounters(accidents, reportsDistributionDto);
+            AddUnmatchedReportsCounter(unmatchedReports, reportsDistributionDto);
+            return reportsDistributionDto;
+        }
+        private void AddNotesAndReportsCounters(List<Accident> accidents, ReportsDistributionDto reportsDistributionDto)
+        {
+            int notesCounter = 0, reportsCounter = 0;
+            foreach (Accident accident in accidents)
+            {
+                if (accident.Type == "note")
+                    notesCounter++;
+                else
+                    reportsCounter++;
+            }
+            reportsDistributionDto.DistributionList.Add(new ReportDistributionItemDto { Category = "Notes", Count = notesCounter });
+            reportsDistributionDto.DistributionList.Add(new ReportDistributionItemDto { Category = "Reports", Count = reportsCounter });
+        }
+        private void AddUnmatchedReportsCounter(List<UnmatchedReport> unmatchedReports, ReportsDistributionDto reportsDistributionDto)
+        {
+            int unMatchedReportCounter = 0;
+            foreach (UnmatchedReport unmatched in unmatchedReports)
+            {
+                unMatchedReportCounter += unmatched.IsUnmatched == false ? 1 : 0;
+            }
+            reportsDistributionDto.DistributionList.Add(new ReportDistributionItemDto { Category = "Unmatched \n Reports", Count = unMatchedReportCounter });
+
         }
 
         private Dictionary<string, int> CreateMonthDictionary(int year)
@@ -68,7 +112,7 @@ namespace LeaveANoteServerProject.Services.StatsService
             Dictionary<string, int> resultDict = takenElements.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             return resultDict;
         }
-        private RegisteredUsersDto FillDictionaryWithData(Dictionary<string, int> monthlyDict, List<User> users)
+        private RegisteredUsersDto FillMonthlyDictionaryWithData(Dictionary<string, int> monthlyDict, List<User> users)
         {
             int sum = 0;
             foreach (var u in users)
@@ -84,6 +128,7 @@ namespace LeaveANoteServerProject.Services.StatsService
                 registeredUsersDto.MonthlyUsers.Add(new MonthlyUsersDto { Month = kvp.Key, Users = sum });
             }
             return registeredUsersDto;
-        }
+        } 
+        #endregion
     }
 }
