@@ -1,18 +1,15 @@
 ﻿using LeaveANoteServerProject.Dto_s.User_Dto_s;
 using LeaveANoteServerProject.DTO_s.User_Dto_s;
-using LeaveANoteServerProject.Models;
 using LeaveANoteServerProject.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using System.Linq.Expressions;
 
 namespace LeaveANoteServerProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-   // [Authorize] 
+    [Authorize] 
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

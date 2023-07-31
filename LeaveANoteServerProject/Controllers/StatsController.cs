@@ -8,7 +8,7 @@ namespace LeaveANoteServerProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize(Roles ="Admin")]
     public class StatsController : ControllerBase
     {
         private readonly IStatsService _statsService;
@@ -19,15 +19,16 @@ namespace LeaveANoteServerProject.Controllers
         }
 
         [HttpGet("registeredUsersData")]
-        public async Task<IActionResult> GetRegisteredUsersData(RegisteredUserDataDtoReq registeredUserDataDtoReq)
+        public async Task<IActionResult> GetRegisteredUsersData([FromQuery]int year)
         {
-            HttpResponse<RegisteredUsersDto> res = await _statsService.RegisteredUsersData(registeredUserDataDtoReq);
+            HttpResponse<RegisteredUsersDto> res = await _statsService.RegisteredUsersData(year);
             return StatusCode(res.StatusCode, res);
         }
-        [HttpGet("reportsDistribution")]
-        public async Task<IActionResult> GetRegisteredUsersData(ReportsDistributtionDtoReq reportsDistributtionDtoReq)
+
+        [HttpGet("reportsDistribution/")]
+        public async Task<IActionResult> GetReportsDistributionData()
         {
-            HttpResponse<ReportsDistributionDto> res = await _statsService.ReportsDistributtion(reportsDistributtionDtoReq);
+            HttpResponse<ReportsDistributionDto> res = await _statsService.ReportsDistributtion();
             return StatusCode(res.StatusCode, res);
         }
     }
