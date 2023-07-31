@@ -4,6 +4,7 @@ using LeaveANoteServerProject.DTO_s.User_Dto_s;
 using LeaveANoteServerProject.Utils;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace LeaveANoteServerProject.Services.UserService
 {
@@ -24,6 +25,7 @@ namespace LeaveANoteServerProject.Services.UserService
             try
             {
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                await CheckForMatchedReports(user);
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
                 string token = Token.CreateToken(user, _configuration);
@@ -44,6 +46,22 @@ namespace LeaveANoteServerProject.Services.UserService
                 return new HttpResponse<object> { IsSuccessful = false, Message = "Registration Failed", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         }
+
+        private async Task CheckForMatchedReports(User user)
+        {
+            List<UnmatchedReport> newUserAccidents = await _context.UnmatchedReports
+                .Where(report => report.DamagedCarNumber == user.CarNumber).Include(r => r.Accident).ToListAsync();
+
+            // Explicitly loading the Accidents navigation property
+            foreach (UnmatchedReport unmatchedReport in newUserAccidents)
+            {
+                user.Accidents.Add(unmatchedReport.Accident);
+                unmatchedReport.IsUnmatched = true;
+                int id = unmatchedReport.Accident.Id;
+                Log.Information("added accident: {@id}", id);
+            }
+        }
+
         public async Task<HttpResponse<List<User>>> GetAllUsers()
         {
             try
