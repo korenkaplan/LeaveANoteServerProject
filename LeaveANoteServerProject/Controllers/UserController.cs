@@ -33,7 +33,7 @@ namespace LeaveANoteServerProject.Controllers
             return StatusCode(res.StatusCode, res);
         }
 
-        [HttpGet("allUsers")]
+        [HttpGet("allUsers"), AllowAnonymous]
         public async Task<IActionResult> GetAllUsers()
         {
             HttpResponse<List<User>> res = await _userService.GetAllUsers();

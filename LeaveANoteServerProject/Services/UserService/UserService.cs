@@ -36,10 +36,10 @@ namespace LeaveANoteServerProject.Services.UserService
                 if (ex.InnerException is SqlException sqlException && IsDuplicateKeyError(sqlException))
                 {
                     string errorMessage = GetDuplicateKeyErrorMessage(sqlException);
-                    return new HttpResponse<object> { IsSuccessful = false, Message = "Failed to update information", Error = errorMessage, StatusCode = 400 };
+                    return new HttpResponse<object> { IsSuccessful = false, Message = "Registration Failed", Error = errorMessage, StatusCode = 400 };
                 }
 
-                return new HttpResponse<object> { IsSuccessful = false, Message = "Failed to update information", Error = ex.InnerException.Message, StatusCode = 500 };
+                return new HttpResponse<object> { IsSuccessful = false, Message = "Registration Failed", Error = ex.InnerException.Message, StatusCode = 500 };
             }
             catch (Exception ex)
             {
