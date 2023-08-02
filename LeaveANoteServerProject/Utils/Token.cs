@@ -18,7 +18,7 @@ namespace LeaveANoteServerProject.Utils
                new Claim("deviceToken", user.DeviceToken),
                new Claim(ClaimTypes.Role, user.Role),
            };
-           var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Authentication:Schemes:Bearer:SigningKeys:0:Value").Value!));
+           var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Secret").Value!));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
