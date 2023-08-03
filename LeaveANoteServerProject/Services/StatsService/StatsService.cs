@@ -1,7 +1,6 @@
 ﻿using LeaveANoteServerProject.Data;
 using LeaveANoteServerProject.DTO_s.Accident_Dto_s;
 using LeaveANoteServerProject.DTO_s.StatsDto_s;
-using LeaveANoteServerProject.Models;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -40,7 +39,6 @@ namespace LeaveANoteServerProject.Services.StatsService
             {
                 List<Accident> accidents = await _context.Accidents.ToListAsync();
                 List<UnmatchedReport> unmatchedReports = await _context.UnmatchedReports.ToListAsync();
-
                 ReportsDistributionDto reportsDistributionDto = FillDistributionData(accidents,unmatchedReports);
 
                 return new HttpResponse<List<ReportDistributionItemDto>> { Success = true, Message = "Graph data", Data = reportsDistributionDto.DistributionList, StatusCode = 200 };
@@ -62,7 +60,7 @@ namespace LeaveANoteServerProject.Services.StatsService
         private ReportsDistributionDto FillDistributionData(List<Accident> accidents, List<UnmatchedReport> unmatchedReports)
         {
             ReportsDistributionDto reportsDistributionDto = new ReportsDistributionDto();
-            AddNotesAndReportsCounters(accidents, reportsDistributionDto);
+            AddNotesAndReportsCounters(accidents, reportsDistributionDto, unmatchedReports);
             AddUnmatchedReportsCounter(unmatchedReports, reportsDistributionDto);
             return reportsDistributionDto;
         }
@@ -71,14 +69,14 @@ namespace LeaveANoteServerProject.Services.StatsService
         /// </summary>
         /// <param name="accidents">The list of accidents (reports).</param>
         /// <param name="reportsDistributionDto">The distribution data to update.</param>
-        private void AddNotesAndReportsCounters(List<Accident> accidents, ReportsDistributionDto reportsDistributionDto)
+        private void AddNotesAndReportsCounters(List<Accident> accidents, ReportsDistributionDto reportsDistributionDto, List<UnmatchedReport> unmatchedReports)
         {
             int notesCounter = 0, reportsCounter = 0;
             foreach (Accident accident in accidents)
             {
                 if (accident.Type == "note")
                     notesCounter++;
-                else
+                else 
                     reportsCounter++;
             }
             reportsDistributionDto.DistributionList.Add(new ReportDistributionItemDto { Category = "Notes", Count = notesCounter });
@@ -92,9 +90,15 @@ namespace LeaveANoteServerProject.Services.StatsService
         private void AddUnmatchedReportsCounter(List<UnmatchedReport> unmatchedReports, ReportsDistributionDto reportsDistributionDto)
         {
             int unMatchedReportCounter = 0;
+            ReportDistributionItemDto reportsDistributions = reportsDistributionDto.DistributionList.FirstOrDefault(item => item.Category == "Reports");
             foreach (UnmatchedReport unmatched in unmatchedReports)
             {
-                unMatchedReportCounter += unmatched.IsUnmatched == false ? 1 : 0;
+                if(!unmatched.IsUnmatched)
+                {
+                    unMatchedReportCounter++;
+                    reportsDistributions!.Count--; // remove the unmatched from the reports counter
+
+                }
             }
             reportsDistributionDto.DistributionList.Add(new ReportDistributionItemDto { Category = "Unmatched \n Reports", Count = unMatchedReportCounter });
 

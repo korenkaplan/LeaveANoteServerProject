@@ -9,7 +9,6 @@ namespace LeaveANoteServerProject.Models
     [Index(nameof(Email), IsUnique = true)]
     [Index(nameof(CarNumber), IsUnique = true)]
     [Index(nameof(PhoneNumber), IsUnique = true)]
-    [Index(nameof(DeviceToken), IsUnique = true)]
     public class User
     { 
         public int Id { get; set; }
