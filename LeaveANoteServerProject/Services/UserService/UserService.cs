@@ -163,7 +163,7 @@ namespace LeaveANoteServerProject.Services.UserService
 
         }
 
-        public async Task<HttpResponse<User>> GetUserById(int id)
+        public async Task<HttpResponse<User>> GetUserById(int id, bool minimal)
         {
             try
             {
@@ -172,11 +172,15 @@ namespace LeaveANoteServerProject.Services.UserService
                 {
                     return new HttpResponse<User> { Success = false, Message = "Failed to fetch the user", Error = "The Id was not found in the database", StatusCode = 404 };
                 }
-                // Explicitly loading the Accidents navigation property
-                await _context.Entry(user).Collection(u => u.Accidents).LoadAsync();
+                if(!minimal)
+                {
+                    // Explicitly loading the Accidents navigation property
+                    await _context.Entry(user).Collection(u => u.Accidents).LoadAsync();
 
-                // Filter accidents where isDeleted == false
-                user.Accidents = user.Accidents.Where(accident => !accident.IsDeleted).ToList();
+                    // Filter accidents where isDeleted == false
+                    user.Accidents = user.Accidents.Where(accident => !accident.IsDeleted).ToList();
+                }
+                user.Password = "";
 
                 return new HttpResponse<User> { Success = true, Message = "User found successfully", Data = user, StatusCode = 200 };
             }
@@ -187,24 +191,6 @@ namespace LeaveANoteServerProject.Services.UserService
 
         }
 
-        public async Task<HttpResponse<MinimalUserDto>> GetMinimalUserById(int id)
-        {
-            try
-            {
-                var user = await _context.Users.FindAsync(id);
-                if (user == null)
-                {
-                    return new HttpResponse<MinimalUserDto> { Success = false, Message = "Failed to fetch the user", Error = "The Id was not found in the database", StatusCode = 404 };
-                }
-                MinimalUserDto minimalUserDto = new MinimalUserDto(user);
-                return new HttpResponse<MinimalUserDto> { Success = true, Message = "User found successfully", Data = minimalUserDto, StatusCode = 200 };
-            }
-            catch (Exception ex)
-            {
-                return new HttpResponse<MinimalUserDto> { Success = false, Message = "Failed to fetch user", Error = ex.InnerException.Message, StatusCode = 500 };
-            }
-
-        }
 
         public async Task<HttpResponse<string>> DeleteAccidentFromInbox(AccidentDeleteDto accidentDeleteDto)
         {

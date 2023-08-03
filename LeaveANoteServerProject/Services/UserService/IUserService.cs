@@ -1,6 +1,5 @@
 ﻿using LeaveANoteServerProject.Dto_s.User_Dto_s;
 using LeaveANoteServerProject.DTO_s.User_Dto_s;
-using Microsoft.Data.SqlClient;
 
 namespace LeaveANoteServerProject.Services.UserService
 {
@@ -73,7 +72,7 @@ namespace LeaveANoteServerProject.Services.UserService
         /// </summary>
         /// <param name="id">The ID of the user to retrieve.</param>
         /// <returns>A response with the user information if found.</returns>
-        Task<HttpResponse<User>> GetUserById(int id);
+        Task<HttpResponse<User>> GetUserById(int id,bool minimal);
 
         /// <summary>
         /// Delete a user from the database by their ID.
@@ -82,12 +81,6 @@ namespace LeaveANoteServerProject.Services.UserService
         /// <returns>A response with the status of the user deletion.</returns>
         Task<HttpResponse<string>> DeleteUserById(int id);
 
-        /// <summary>
-        /// Get a minimal user object from the database by their ID.
-        /// </summary>
-        /// <param name="id">The ID of the user to retrieve.</param>
-        /// <returns>A response with the minimal user information if found.</returns>
-        Task<HttpResponse<MinimalUserDto>> GetMinimalUserById(int id);
 
     }
 }

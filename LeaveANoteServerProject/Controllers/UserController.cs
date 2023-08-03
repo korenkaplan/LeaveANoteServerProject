@@ -69,18 +69,12 @@ namespace LeaveANoteServerProject.Controllers
         }
 
         [HttpGet("getById/")]
-        public async Task<IActionResult> GetUserById([FromQuery] int id)
+        public async Task<IActionResult> GetUserById([FromQuery] int id,bool minimal)
         {
-            HttpResponse<User> res = await _userService.GetUserById(id);
+            HttpResponse<User> res = await _userService.GetUserById(id, minimal);
             return StatusCode(res.StatusCode, res);
         }
 
-        [HttpGet("getByIdMinimal/")]
-        public async Task<IActionResult> GetMinimalUserById([FromQuery] int id)
-        {
-            HttpResponse<MinimalUserDto> res = await _userService.GetMinimalUserById(id);
-            return StatusCode(res.StatusCode, res);
-        }
         [HttpPut("readMessageInbox")]
         public async Task<IActionResult> DeleteAccidentFromInbox(AccidentDeleteDto accidentDeleteDto)
         {
