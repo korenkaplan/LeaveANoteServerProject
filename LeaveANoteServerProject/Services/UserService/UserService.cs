@@ -1,6 +1,7 @@
 ﻿using LeaveANoteServerProject.Data;
 using LeaveANoteServerProject.Dto_s.User_Dto_s;
 using LeaveANoteServerProject.DTO_s.User_Dto_s;
+using LeaveANoteServerProject.Models;
 using LeaveANoteServerProject.Utils;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +68,11 @@ namespace LeaveANoteServerProject.Services.UserService
             try
             {
                 var users = await _context.Users.Include(u => u.Accidents).ToListAsync();
+
+                users.ForEach(user => {
+                user.Accidents = user.Accidents.Where(accident => !accident.IsDeleted).ToList();
+                });
+                // Filter accidents where isDeleted == false
                 return new HttpResponse<List<User>> { Success = true, Message = "All Database Users", Data = users, StatusCode = 200 };
             }
             catch (Exception ex)
@@ -168,6 +174,10 @@ namespace LeaveANoteServerProject.Services.UserService
                 }
                 // Explicitly loading the Accidents navigation property
                 await _context.Entry(user).Collection(u => u.Accidents).LoadAsync();
+
+                // Filter accidents where isDeleted == false
+                user.Accidents = user.Accidents.Where(accident => !accident.IsDeleted).ToList();
+
                 return new HttpResponse<User> { Success = true, Message = "User found successfully", Data = user, StatusCode = 200 };
             }
             catch (Exception ex)
@@ -241,11 +251,11 @@ namespace LeaveANoteServerProject.Services.UserService
                 accident.IsDeleted = true;
                 await _context.SaveChangesAsync();
 
-                return new HttpResponse<string> { Success = true, Message = "Message has been marked as Deleted", StatusCode = 200 };
+                return new HttpResponse<string> { Success = true, Message = "Message has been deleted successfully", StatusCode = 200 };
             }
             catch (Exception ex)
             {
-                return new HttpResponse<string> { Success = false, Message = "Failed to Mark message as deleted", Error = ex.InnerException.Message, StatusCode = 500 };
+                return new HttpResponse<string> { Success = false, Message = "Failed to delete message", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         }
 
