@@ -14,7 +14,7 @@ namespace LeaveANoteServerProject.Utils
         {
             List<Claim> claims = new List<Claim>
             {
-                new Claim("userId", user.Id.ToString()),
+                new Claim("id", user.Id.ToString()),
                new Claim("deviceToken", user.DeviceToken),
                new Claim(ClaimTypes.Role, user.Role),
            };

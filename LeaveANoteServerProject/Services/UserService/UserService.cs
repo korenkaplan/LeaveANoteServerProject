@@ -29,7 +29,7 @@ namespace LeaveANoteServerProject.Services.UserService
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
                 string token = Token.CreateToken(user, _configuration);
-                return new HttpResponse<object> { Success = true, Message = "Registration Succeed", Data = new { token }, StatusCode = 201 };
+                return new HttpResponse<object> { Success = true, Message = "Registration Succeed", Data = token, StatusCode = 201 };
             }
             catch (DbUpdateException ex)
             {
