@@ -87,7 +87,7 @@ namespace LeaveANoteServerProject.Controllers
             HttpResponse<string> res = await _userService.DeleteAccidentFromInbox(accidentDeleteDto);
             return StatusCode(res.StatusCode, res);
         }
-        [HttpPost("deleteMessage")]
+        [HttpPut("deleteMessage")]
         public async Task<IActionResult> DeleteAccidentFromHistory(AccidentDeleteDto accidentDeleteDto)
         {
             HttpResponse<string> res = await _userService.DeleteAccidentFromHistory(accidentDeleteDto);

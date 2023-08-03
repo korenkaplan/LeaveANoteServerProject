@@ -109,7 +109,7 @@ namespace LeaveANoteServerProject.Services.UserService
                 }
                 user.DeviceToken = deviceTokenUpdateDto.DeviceToken;
                 await _context.SaveChangesAsync();
-                return new HttpResponse<string> { Success = true, Message = "Token updated successfully", Data = user.DeviceToken };
+                return new HttpResponse<string> { Success = true, Message = "Token updated successfully", Data = user.DeviceToken, StatusCode = 204 };
             }
             catch (Exception ex)
             {
