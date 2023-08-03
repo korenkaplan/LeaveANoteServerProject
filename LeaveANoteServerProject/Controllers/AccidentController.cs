@@ -8,7 +8,7 @@ namespace LeaveANoteServerProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class AccidentController : ControllerBase
     {
 

@@ -9,7 +9,6 @@ namespace LeaveANoteServerProject.Utils
 {
     public static class Token
     {
-        private static int AdminId = 8;
         public static string CreateToken(User user, IConfiguration _configuration)
         {
             List<Claim> claims = new List<Claim>
