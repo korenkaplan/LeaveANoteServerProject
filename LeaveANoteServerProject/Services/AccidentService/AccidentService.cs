@@ -24,16 +24,16 @@ namespace LeaveANoteServerProject.Services.AccidentService
 
                 if (user == null)
                 {
-                    return new HttpResponse<Accident> { IsSuccessful = false, StatusCode = 500, Message = $"No user found with the id of: {createNoteDto.UserId}" };
+                    return new HttpResponse<Accident> { Success = false, StatusCode = 500, Message = $"No user found with the id of: {createNoteDto.UserId}" };
                 }
                 Accident acccident = CreateAccidentObjectFromNote(createNoteDto);
                 user.Accidents.Add(acccident);
                 await _context.SaveChangesAsync();
-                return new HttpResponse<Accident> { IsSuccessful = true, StatusCode = 201, Data = acccident, Message = $"The note has been sent to {user.Name}" };
+                return new HttpResponse<Accident> { Success = true, StatusCode = 201, Data = acccident, Message = $"The note has been sent to {user.Name}" };
             }
             catch (Exception ex)
             {
-                return new HttpResponse<Accident> { IsSuccessful = false, Message = "Failed to create note", Error = ex.InnerException.Message, StatusCode = 500 };
+                return new HttpResponse<Accident> { Success = false, Message = "Failed to create note", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         }
 
@@ -51,16 +51,16 @@ namespace LeaveANoteServerProject.Services.AccidentService
                     UnmatchedReport unmatched =  CreateUnmatchedReport(accident, createReportReqDto.DamagedCarNumber);
                     await _context.UnmatchedReports.AddAsync(unmatched);
                     await _context.SaveChangesAsync();
-                    return new HttpResponse<Accident> { IsSuccessful = true, Message = "The report has been Added to unmatched reoprts", Data = accident, StatusCode = 201 };
+                    return new HttpResponse<Accident> { Success = true, Message = "The report has been Added to unmatched reoprts", Data = accident, StatusCode = 201 };
                 }
                 //if damaged user found add to the user's accident list
                 user.Accidents.Add(accident);
                 await _context.SaveChangesAsync();
-                return new HttpResponse<Accident> { IsSuccessful = true, Message = $"The report has been sent to {user.Name}", Data = accident, StatusCode = 201 };
+                return new HttpResponse<Accident> { Success = true, Message = $"The report has been sent to {user.Name}", Data = accident, StatusCode = 201 };
             }
             catch (Exception ex)
             {
-                return new HttpResponse<Accident> { IsSuccessful = false, Message = "Failed to create report", Error = ex.InnerException.Message, StatusCode = 500 };
+                return new HttpResponse<Accident> { Success = false, Message = "Failed to create report", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         }
 

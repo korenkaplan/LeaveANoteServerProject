@@ -1,4 +1,5 @@
-﻿using LeaveANoteServerProject.DTO_s.StatsDto_s;
+﻿using LeaveANoteServerProject.DTO_s.Accident_Dto_s;
+using LeaveANoteServerProject.DTO_s.StatsDto_s;
 using LeaveANoteServerProject.Services.StatsService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,14 +22,14 @@ namespace LeaveANoteServerProject.Controllers
         [HttpGet("registeredUsersData")]
         public async Task<IActionResult> GetRegisteredUsersData([FromQuery]int year)
         {
-            HttpResponse<RegisteredUsersDto> res = await _statsService.RegisteredUsersData(year);
+            HttpResponse<List<MonthlyUsersDto>> res = await _statsService.RegisteredUsersData(year);
             return StatusCode(res.StatusCode, res);
         }
 
         [HttpGet("reportsDistribution/")]
         public async Task<IActionResult> GetReportsDistributionData()
         {
-            HttpResponse<ReportsDistributionDto> res = await _statsService.ReportsDistributtion();
+            HttpResponse<List<ReportDistributionItemDto>> res = await _statsService.ReportsDistributtion();
             return StatusCode(res.StatusCode, res);
         }
     }

@@ -16,7 +16,7 @@ namespace LeaveANoteServerProject.Services.StatsService
             _context = context;
         }
 
-        public async Task<HttpResponse<RegisteredUsersDto>> RegisteredUsersData(int year)
+        public async Task<HttpResponse<List<MonthlyUsersDto>>> RegisteredUsersData(int year)
         {
             try
             {
@@ -26,15 +26,15 @@ namespace LeaveANoteServerProject.Services.StatsService
                 Dictionary<string, int> dict = CreateMonthDictionary(year);
                 RegisteredUsersDto registeredUsersDto = FillMonthlyDictionaryWithData(dict, users);
 
-                return new HttpResponse<RegisteredUsersDto> { IsSuccessful = true, Message = "Graph data", Data = registeredUsersDto , StatusCode = 200};
+                return new HttpResponse<List<MonthlyUsersDto>> { Success = true, Message = "Graph data", Data = registeredUsersDto.MonthlyUsers , StatusCode = 200};
             }
             catch (Exception ex)
             {
-                return new HttpResponse<RegisteredUsersDto> { IsSuccessful = false, Message = "Failed to fetch graph data", Error = ex.InnerException.Message, StatusCode = 500 };
+                return new HttpResponse<List<MonthlyUsersDto>> { Success = false, Message = "Failed to fetch graph data", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         }
 
-        public async Task<HttpResponse<ReportsDistributionDto>> ReportsDistributtion()
+        public async Task<HttpResponse<List<ReportDistributionItemDto>>> ReportsDistributtion()
         {
             try
             {
@@ -43,12 +43,12 @@ namespace LeaveANoteServerProject.Services.StatsService
 
                 ReportsDistributionDto reportsDistributionDto = FillDistributionData(accidents,unmatchedReports);
 
-                return new HttpResponse<ReportsDistributionDto> { IsSuccessful = true, Message = "Graph data", Data = reportsDistributionDto, StatusCode = 200 };
+                return new HttpResponse<List<ReportDistributionItemDto>> { Success = true, Message = "Graph data", Data = reportsDistributionDto.DistributionList, StatusCode = 200 };
 
             }
             catch (Exception ex)
             {
-                return new HttpResponse<ReportsDistributionDto> { IsSuccessful = false, Message = "Failed to fetch graph data", Error = ex.InnerException.Message, StatusCode = 500 };
+                return new HttpResponse<List<ReportDistributionItemDto>> { Success = false, Message = "Failed to fetch graph data", Error = ex.InnerException.Message, StatusCode = 500 };
             }
         }
 
