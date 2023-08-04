@@ -33,37 +33,36 @@ builder.Services.AddSwaggerGen(options =>
     });
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
+
 //add the configuration for serilog logger
 Log.Logger = new LoggerConfiguration().MinimumLevel.Information().WriteTo.Console().CreateLogger();
 
 if (builder.Environment.IsProduction())
 {
-    // get the configuration for the Azure key vault from app settings
-    var keyVaultUrl = builder.Configuration.GetSection("KeyVault:KeyVaultUrl");
-    var keyVaultClientId = builder.Configuration.GetSection("KeyVault:ClientId");
-    var keyVaultClientSecret = builder.Configuration.GetSection("KeyVault:ClientSecret");
-    var keyVaultDirectoryID = builder.Configuration.GetSection("KeyVault:DirectoryID");
+    //get the azure key vault url from the Enviorment variables of th App Service 
+    var keyVaultUrl = Environment.GetEnvironmentVariable("keyVaultUrl");
+    if (string.IsNullOrEmpty(keyVaultUrl))
+    {
+        throw new InvalidOperationException("Key Vault URL not configured.");
+    }
+    var client = new SecretClient(new Uri(keyVaultUrl), new ManagedIdentityCredential());
 
-    //creat the credentials and the client
-    var credential = new ClientSecretCredential(keyVaultDirectoryID.Value!.ToString(), keyVaultClientId.Value!.ToString(), keyVaultClientSecret.Value!.ToString());
-    builder.Configuration.AddAzureKeyVault(keyVaultUrl.Value!.ToString(), keyVaultClientId.Value!.ToString(), keyVaultClientSecret.Value!.ToString(), new DefaultKeyVaultSecretManager());
-    var client = new SecretClient(new Uri(keyVaultUrl.Value!.ToString()), credential);
+    //get the connection string and the JWT key 
+    KeyVaultSecret CONSTRING = client.GetSecret("DefaultConnection");
+    KeyVaultSecret JWTKEY = client.GetSecret("JWTKEY");
+    string conString = CONSTRING.Value;
+    string jwtKey = JWTKEY.Value;
+    Token.JWTKEY = jwtKey;
+    builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(conString));
 
-    //add the connections trign from the vault and assign in to the datacontext
-    string CONSTRING = client.GetSecret("DefaultConnection").Value.Value.ToString();
-    builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(CONSTRING));
-
-    //get the JWT Secret key from the key vault and assign it to the the Token Class
-    string JWTTOKEN = client.GetSecret("JWTTOKEN").Value.Value.ToString();
-    Token.JWTKEY = JWTTOKEN;
 }
 
 if (builder.Environment.IsDevelopment())
 {
-    builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-    string JWTTOKEN = builder.Configuration.GetSection("AppSettings:Secret").Value!;
-    Token.JWTKEY = JWTTOKEN;
-
+    string conString = builder.Configuration["ConnectionsStrings:AzureSql"];
+    string jwtToken = builder.Configuration["Authentication:Schemes:Bearer:SigningKeys:0:Value"];
+    builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(conString));
+    Token.JWTKEY = jwtToken;
 }
 
 //add JWT Authentication
