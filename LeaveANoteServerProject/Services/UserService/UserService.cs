@@ -13,7 +13,6 @@ namespace LeaveANoteServerProject.Services.UserService
     {
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
-
         public UserService(DataContext context, IConfiguration configuration)
         {
             _context = context;
@@ -29,7 +28,7 @@ namespace LeaveANoteServerProject.Services.UserService
                 await CheckForMatchedReports(user);
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
-                string token = Token.CreateToken(user, _configuration);
+                string token = Token.CreateToken(user);
                 return new HttpResponse<object> { Success = true, Message = "Registration Succeed", Data = token, StatusCode = 201 };
             }
             catch (DbUpdateException ex)
@@ -95,7 +94,7 @@ namespace LeaveANoteServerProject.Services.UserService
                     return new HttpResponse<object> { Success = false, Message = "Bad Credentials", StatusCode = 404 };
 
                 }
-                string token = Token.CreateToken(user, _configuration);
+                string token = Token.CreateToken(user);
                 return new HttpResponse<object> { Success = true, Message = "Identifaction succeeded", Data = new { token }, StatusCode = 200 };
             }
             catch (Exception ex)

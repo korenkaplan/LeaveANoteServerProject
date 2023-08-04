@@ -9,7 +9,8 @@ namespace LeaveANoteServerProject.Utils
 {
     public static class Token
     {
-        public static string CreateToken(User user, IConfiguration _configuration)
+        public static string JWTKEY {get; set;}
+        public static string CreateToken(User user)
         {
             List<Claim> claims = new List<Claim>
             {
@@ -17,7 +18,7 @@ namespace LeaveANoteServerProject.Utils
                new Claim("deviceToken", user.DeviceToken),
                new Claim(ClaimTypes.Role, user.Role),
            };
-           var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Secret").Value!));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTKEY));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
