@@ -1,7 +1,7 @@
 
 # Leave A Note App - Backend
 
-Welcome to the backend repository of the Leave A Note app.
+Welcome to the backend repository of the [Leave a Note App](https://github.com/korenkaplan/Leave-A-Note).
 
  This repository contains the ASP.NET Core project with Entity Framework that serves as the backend for [Leave a Note App](https://github.com/korenkaplan/Leave-A-Note). This README will provide you with essential information to understand and work with the backend portion of the application.
 
@@ -9,6 +9,7 @@ Welcome to the backend repository of the Leave A Note app.
 
 
 ## Table of Content
+ - [Tech Stack](#tech-stack)
  - [Getting Started](#getting-started)
  - [Project Structure](#project-structure)
  - [Database](#database)
@@ -16,6 +17,15 @@ Welcome to the backend repository of the Leave A Note app.
  - [Environments and Data Security](#environments-and-data-security)
  - [API Reference](#api-reference)
  - [Author and Feedback](#author-and-feedback)
+
+## Tech Stack
+
+**Server:** ASP.NET 7 Core, Entity Framework 7
+
+**Database:** Azure SQL Server and Database
+
+**Hosting:** Microsoft Azure 
+
 ## Getting Started
 ### Prerequisites
 Before you begin, make sure you have the following prerequisites installed:
