@@ -25,10 +25,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme 
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
-        In = ParameterLocation.Header   ,
-        Name="Authorization",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
         Type = SecuritySchemeType.ApiKey
     });
     options.OperationFilter<SecurityRequirementsOperationFilter>();
@@ -59,8 +59,8 @@ if (builder.Environment.IsProduction())
 
 if (builder.Environment.IsDevelopment())
 {
-    string conString = builder.Configuration["ConnectionsStrings:AzureSql"];
-    string jwtToken = builder.Configuration["Authentication:Schemes:Bearer:SigningKeys:0:Value"];
+    string conString = builder.Configuration["ConnectionsStrings:defaultConnection"];
+    string jwtToken = builder.Configuration["JWTKEY"];
     builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(conString));
     Token.JWTKEY = jwtToken;
 }
