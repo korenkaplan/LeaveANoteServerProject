@@ -60,9 +60,6 @@ if (builder.Environment.IsProduction())
 if (builder.Environment.IsDevelopment())
 {
     string conString = builder.Configuration["ConnectionsStrings:defaultConnection"];
-    string conString2 = builder.Configuration["ConnectionsStrings:AzureSql"];
-    Log.Information(conString);
-    //string jwtToken = builder.Configuration["Authentication:Schemes:Bearer:SigningKeys:0:Value"];
     string jwtToken = builder.Configuration["JWTKEY"];
     builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(conString));
     Token.JWTKEY = jwtToken;
