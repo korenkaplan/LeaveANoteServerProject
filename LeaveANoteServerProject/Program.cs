@@ -6,16 +6,12 @@ using LeaveANoteServerProject.Services.UserService;
 using Serilog;
 using LeaveANoteServerProject.Services.AccidentService;
 using LeaveANoteServerProject.Services.StatsService;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Configuration;
 using System.Text;
 using Azure.Identity;
-using Microsoft.Extensions.Configuration.AzureKeyVault;
 using Azure.Security.KeyVault.Secrets;
-using Newtonsoft.Json.Linq;
 using LeaveANoteServerProject.Utils;
 
 var builder = WebApplication.CreateBuilder(args);

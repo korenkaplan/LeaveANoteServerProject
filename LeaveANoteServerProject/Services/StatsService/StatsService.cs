@@ -1,6 +1,7 @@
 ﻿using LeaveANoteServerProject.Data;
 using LeaveANoteServerProject.DTO_s.Accident_Dto_s;
 using LeaveANoteServerProject.DTO_s.StatsDto_s;
+using LeaveANoteServerProject.Utils;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 

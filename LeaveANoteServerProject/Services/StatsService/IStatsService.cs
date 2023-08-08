@@ -1,5 +1,6 @@
 ﻿using LeaveANoteServerProject.DTO_s.Accident_Dto_s;
 using LeaveANoteServerProject.DTO_s.StatsDto_s;
+using LeaveANoteServerProject.Utils;
 
 namespace LeaveANoteServerProject.Services.StatsService
 {

@@ -1,6 +1,7 @@
 ﻿using LeaveANoteServerProject.DTO_s.Accident_Dto_s;
 using LeaveANoteServerProject.DTO_s.StatsDto_s;
 using LeaveANoteServerProject.Services.StatsService;
+using LeaveANoteServerProject.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
