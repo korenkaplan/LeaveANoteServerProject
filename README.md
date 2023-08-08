@@ -103,7 +103,7 @@ dotnet ef database update
 ### Accidents Table
 - Each row represents an accident report or note.
 - An accident is associated with the damaged user.
-- Each accidentis can be associated with zero or one unmatched report.
+- Each accident can be associated with zero or one unmatched report.
 - The relationship is many-to-one from Accidents to Users.
 - The relationship is one-to-one from Accidents to UnmatchedReports.
 
@@ -212,7 +212,7 @@ Base Url: "api/[controller]"
 
 #### Register 
 
-Registers a new user.
+Registers a new user and returns a JWT token.
 
 - **URL:** `/api/user/register`
 - **Method:** `POST`
